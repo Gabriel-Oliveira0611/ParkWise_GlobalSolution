@@ -1,0 +1,1 @@
+export function App() { return <main id="conteudo"><h1>ParkWise</h1><p>Construindo a integracao com a API Java.</p></main> }
