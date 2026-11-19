@@ -16,6 +16,7 @@ import {
 import { Veiculos } from "./pages/Veiculos";
 import { Reservas } from "./pages/Reservas";
 import { Parceiro, EditarUnidade } from "./pages/Parceiro";
+import { GestaoReservas } from "./pages/GestaoReservas";
 export function App() {
   return (
     <SessaoProvider>
@@ -43,6 +44,7 @@ export function App() {
               path="parceiro/estacionamentos/:id/editar"
               element={<EditarUnidade />}
             />
+            <Route path="parceiro/:id/reservas" element={<GestaoReservas />} />
             <Route path="*" element={<NaoEncontrado />} />
           </Route>
         </Routes>
