@@ -11,6 +11,7 @@ import { Reservas } from "./pages/Reservas"
 import { Parceiro, EditarUnidade } from "./pages/Parceiro"
 import { GestaoReservas } from "./pages/GestaoReservas"
 import { Tarifas } from "./pages/Tarifas"
+import { Acessos } from "./pages/Acessos"
 export function App() { return <SessaoProvider><FeedbackProvider><Routes><Route element={<Layout />}>
 <Route index element={<Inicio />} />
 <Route path="estacionamentos" element={<Estacionamentos />} />
@@ -29,5 +30,6 @@ export function App() { return <SessaoProvider><FeedbackProvider><Routes><Route 
 <Route path="parceiro/estacionamentos/:id/editar" element={<EditarUnidade />} />
 <Route path="parceiro/:id/reservas" element={<GestaoReservas />} />
 <Route path="parceiro/:id/tarifas" element={<Tarifas />} />
+<Route path="parceiro/:id/acessos" element={<Acessos />} />
 <Route path="*" element={<NaoEncontrado />} />
 </Route></Routes></FeedbackProvider></SessaoProvider> }
