@@ -1,0 +1,3332 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ParkWise API — CitizenTech",
+    "description": "API RESTful para busca de estacionamentos, reserva de vagas, controle de acessos, tarifação e avaliações.\n\n### Como autenticar no Swagger\n1. Utilize **POST /auth/login** (ou **POST /auth/criar-admin** para gerar um usuário de teste) e copie o `token` retornado.\n2. Clique no botão **Authorize** acima e informe o token JWT.\n3. Endpoints com cadeado aberto são públicos; endpoints com cadeado fechado exigem token JWT e perfil compatível (`CLIENTE`, `DONO`, `GERENTE` ou `ADMIN`).\n",
+    "contact": {
+      "name": "Equipe ParkWise"
+    },
+    "version": "1.0.0",
+    "summary": "API REST de gerenciamento, busca e reserva de estacionamentos"
+  },
+  "servers": [
+    {
+      "url": "https://gerenciamentoestacionamento-ru6m.onrender.com",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "Bearer authentication": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "01. Autenticação",
+      "description": "Login JWT, consulta do usuário autenticado e geração de admin de teste"
+    },
+    {
+      "name": "11. Rotas 1:N — Cliente",
+      "description": "Operações aninhadas vinculadas a um Cliente (carros e reservas)"
+    },
+    {
+      "name": "12. Rotas 1:N — Dono",
+      "description": "Operações aninhadas vinculadas a um Dono (estacionamentos)"
+    },
+    {
+      "name": "06. Carros",
+      "description": "CRUD direto de veículos (requer perfil CLIENTE ou ADMIN)"
+    },
+    {
+      "name": "03. Donos de Estacionamento",
+      "description": "Cadastro, consulta, atualização e remoção de proprietários"
+    },
+    {
+      "name": "07. Tarifas e Valores",
+      "description": "Consulta, atualização e remoção de tarifas"
+    },
+    {
+      "name": "07. Tarifas e Valores",
+      "description": "CRUD direto de tabelas de preços e cobranças (requer perfil DONO ou ADMIN)"
+    },
+    {
+      "name": "08. Reservas",
+      "description": "CRUD direto de reservas de vagas em estacionamentos"
+    },
+    {
+      "name": "09. Acessos (Entrada e Saída)",
+      "description": "CRUD direto de registros de entrada e saída de veículos nos estacionamentos"
+    },
+    {
+      "name": "04. Gerentes",
+      "description": "CRUD de gerentes vinculados a estacionamentos (requer perfil DONO ou ADMIN)"
+    },
+    {
+      "name": "02. Clientes",
+      "description": "Cadastro, consulta, atualização e remoção de clientes"
+    },
+    {
+      "name": "10. Avaliações",
+      "description": "Consulta, atualização e remoção de avaliações"
+    },
+    {
+      "name": "10. Avaliações",
+      "description": "CRUD direto de avaliações de estacionamentos"
+    },
+    {
+      "name": "05. Estacionamentos",
+      "description": "Consulta, atualização e remoção de estacionamentos"
+    },
+    {
+      "name": "13. Rotas 1:N — Estacionamento",
+      "description": "Operações aninhadas vinculadas a um Estacionamento (reservas, tarifas, acessos e avaliações)"
+    },
+    {
+      "name": "01. Autenticação",
+      "description": "Login JWT, consulta do perfil autenticado e criação de usuário ADMIN para testes"
+    },
+    {
+      "name": "08. Reservas",
+      "description": "Consulta, atualização e remoção de reservas"
+    },
+    {
+      "name": "04. Gerentes",
+      "description": "Cadastro, consulta, atualização e remoção de gerentes"
+    },
+    {
+      "name": "09. Acessos (Entrada e Saída)",
+      "description": "Consulta, atualização e remoção de acessos"
+    },
+    {
+      "name": "06. Carros",
+      "description": "Consulta, atualização e remoção de veículos"
+    }
+  ],
+  "paths": {
+    "/valor/{id}": {
+      "get": {
+        "tags": ["07. Tarifas e Valores"],
+        "summary": "Buscar por ID",
+        "description": "Busca uma tarifa em específico através do ID",
+        "operationId": "buscarPorId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Valor encontrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Valor não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["07. Tarifas e Valores"],
+        "summary": "Atualizar valor",
+        "description": "Atualiza um valor cadastrado no sistema",
+        "operationId": "atualizarValor",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValorRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Valor atualizado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Valor ou estacionamento não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["07. Tarifas e Valores"],
+        "summary": "Deletar valor",
+        "description": "Desativa (soft delete) um valor cadastrado no sistema",
+        "operationId": "deletarValor",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Valor desativado com sucesso (sem conteúdo no corpo)"
+          },
+          "404": {
+            "description": "Valor não encontrado"
+          }
+        }
+      }
+    },
+    "/reserva/{id}": {
+      "get": {
+        "tags": ["08. Reservas"],
+        "summary": "Buscar por ID",
+        "description": "Busca uma reserva em específico através do ID",
+        "operationId": "buscarPorId_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reserva encontrada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Reserva não encontrada",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["08. Reservas"],
+        "summary": "Atualizar reserva",
+        "description": "Altera as informações de uma reserva",
+        "operationId": "atualizarReserva",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Reserva atualizada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Reserva não encontrada",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Não há vagas disponíveis para confirmar a reserva",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["08. Reservas"],
+        "summary": "Deletar reserva",
+        "description": "Desativa (soft delete) uma reserva do sistema",
+        "operationId": "deletarReserva",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Reserva desativada com sucesso (sem conteúdo no corpo)"
+          },
+          "404": {
+            "description": "Reserva não encontrada"
+          }
+        }
+      }
+    },
+    "/gerente/{id}": {
+      "get": {
+        "tags": ["04. Gerentes"],
+        "summary": "Buscar por ID",
+        "description": "Busca um gerente em específico através do ID",
+        "operationId": "buscarPorId_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gerente encontrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GerenteResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Gerente não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GerenteResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["04. Gerentes"],
+        "summary": "Atualizar um gerente existente",
+        "description": "Atualiza os dados de um gerente existente com base no ID fornecido.",
+        "operationId": "atualizarGerente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GerenteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Gerente atualizado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GerenteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GerenteResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Gerente não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GerenteResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["04. Gerentes"],
+        "summary": "Deletar um gerente",
+        "description": "Desativa (soft delete) um gerente existente com base no ID fornecido.",
+        "operationId": "deletarGerente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Gerente deletado com sucesso (sem conteúdo no corpo)"
+          },
+          "404": {
+            "description": "Gerente não encontrado"
+          }
+        }
+      }
+    },
+    "/estacionamento/{id}": {
+      "get": {
+        "tags": ["05. Estacionamentos"],
+        "summary": "Buscar estacionamento por ID",
+        "description": "Acesso público. Busca um estacionamento específico através do seu ID.",
+        "operationId": "buscarPorId_3",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estacionamento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Estacionamento encontrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstacionamentoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Estacionamento não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstacionamentoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "tags": ["05. Estacionamentos"],
+        "summary": "Atualizar um estacionamento existente",
+        "description": "Atualiza os dados de um estacionamento existente com base no ID fornecido.",
+        "operationId": "atualizarEstacionamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstacionamentoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Estacionamento atualizado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstacionamentoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstacionamentoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Estacionamento não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstacionamentoResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["05. Estacionamentos"],
+        "summary": "Desativar um estacionamento",
+        "description": "Desativa (soft delete) um estacionamento existente com base no ID fornecido.",
+        "operationId": "desativarEstacionamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Estacionamento desativado com sucesso (sem conteúdo no corpo)"
+          },
+          "404": {
+            "description": "Estacionamento não encontrado"
+          },
+          "409": {
+            "description": "Estacionamento possui registros vinculados"
+          }
+        }
+      }
+    },
+    "/dono/{id}": {
+      "get": {
+        "tags": ["03. Donos de Estacionamento"],
+        "summary": "Buscar por ID",
+        "description": "Busca um dono em específico através do ID",
+        "operationId": "buscarPorId_4",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dono encontrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dono não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonoResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["03. Donos de Estacionamento"],
+        "summary": "Atualizar dono",
+        "description": "Atualiza as informações de um dono já cadastrado no sistema.",
+        "operationId": "atualizarDono",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DonoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Dono atualizado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dono não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonoResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["03. Donos de Estacionamento"],
+        "summary": "Deletar dono",
+        "description": "Desativa (soft delete) um dono já cadastrado do sistema.",
+        "operationId": "deletarDono",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Dono desativado com sucesso (sem conteúdo no corpo)"
+          },
+          "404": {
+            "description": "Dono não encontrado"
+          },
+          "409": {
+            "description": "Dono possui registros vinculados"
+          }
+        }
+      }
+    },
+    "/cliente/{id}": {
+      "get": {
+        "tags": ["02. Clientes"],
+        "summary": "Buscar cliente por ID",
+        "description": "Acesso público. Busca um cliente específico através do seu ID.",
+        "operationId": "buscarPorId_5",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do cliente",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente encontrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "tags": ["02. Clientes"],
+        "summary": "Atualizar um cliente existente",
+        "description": "Atualiza os dados de um cliente existente com base no ID fornecido.",
+        "operationId": "atualizarCliente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClienteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Cliente atualizado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["02. Clientes"],
+        "summary": "Deletar um cliente",
+        "description": "Desativa (soft delete) um cliente existente com base no ID fornecido.",
+        "operationId": "deletarCliente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Cliente deletado com sucesso (sem conteúdo no corpo)"
+          },
+          "404": {
+            "description": "Cliente não encontrado"
+          },
+          "409": {
+            "description": "Cliente possui registros vinculados"
+          }
+        }
+      }
+    },
+    "/carro/{id}": {
+      "get": {
+        "tags": ["06. Carros"],
+        "summary": "Buscar por ID",
+        "description": "Busca um carro em específico através do ID",
+        "operationId": "buscarPorId_6",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Carro encontrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarroResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Carro não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarroResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["06. Carros"],
+        "summary": "Atualizar carro",
+        "description": "Atualiza os dados de um carro cadastrado no sistema",
+        "operationId": "atualizarCarro",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CarroRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Carro atualizado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarroResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarroResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Carro ou cliente não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarroResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["06. Carros"],
+        "summary": "Deletar carro",
+        "description": "Desativa (soft delete) um carro cadastrado no sistema",
+        "operationId": "deletarCarro",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Carro desativado com sucesso (sem conteúdo no corpo)"
+          },
+          "404": {
+            "description": "Carro não encontrado"
+          }
+        }
+      }
+    },
+    "/avaliacao/{id}": {
+      "get": {
+        "tags": ["10. Avaliações"],
+        "summary": "Buscar avaliação por ID",
+        "description": "Acesso público. Busca uma avaliação específica através do seu ID.",
+        "operationId": "buscarPorId_7",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Avaliação encontrada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvaliacaoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Avaliação não encontrada",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvaliacaoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "tags": ["10. Avaliações"],
+        "summary": "Atualizar uma avaliação",
+        "description": "Atualiza uma avaliação já cadastrada no sistema",
+        "operationId": "atualizarAvaliacao",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvaliacaoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Avaliação atualizada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvaliacaoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Avaliação inválida ou prazo de edição expirado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvaliacaoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Avaliação, cliente ou estacionamento não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvaliacaoResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["10. Avaliações"],
+        "summary": "Deletar uma avaliação",
+        "description": "Desativa (soft delete) uma avaliação já cadastrada no sistema",
+        "operationId": "deletarAvaliacao",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Avaliação desativada com sucesso (sem conteúdo no corpo)"
+          },
+          "404": {
+            "description": "Avaliação não encontrada"
+          }
+        }
+      }
+    },
+    "/acesso/{id}": {
+      "get": {
+        "tags": ["09. Acessos (Entrada e Saída)"],
+        "summary": "Buscar por ID",
+        "description": "Busca um acesso em específico através do ID",
+        "operationId": "buscarPorId_8",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Acesso encontrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcessoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Acesso não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcessoResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["09. Acessos (Entrada e Saída)"],
+        "summary": "Atualizar um acesso",
+        "description": "Atualiza um acesso já cadastrado no sistema",
+        "operationId": "atualizarAcesso",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcessoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Acesso atualizado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcessoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcessoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Acesso ou estacionamento não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcessoResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["09. Acessos (Entrada e Saída)"],
+        "summary": "Deletar um acesso",
+        "description": "Desativa (soft delete) um acesso já cadastrado no sistema",
+        "operationId": "deletarAcesso",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Acesso desativado com sucesso (sem conteúdo no corpo)"
+          },
+          "404": {
+            "description": "Acesso não encontrado"
+          }
+        }
+      }
+    },
+    "/gerente": {
+      "get": {
+        "tags": ["04. Gerentes"],
+        "summary": "Listar todos os gerentes",
+        "description": "Retorna uma lista de todos os gerentes ativos cadastrados no sistema.",
+        "operationId": "listarGerentes",
+        "responses": {
+          "200": {
+            "description": "Lista de gerentes retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GerenteResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["04. Gerentes"],
+        "summary": "Cadastrar um novo gerente",
+        "description": "Cadastra um novo gerente no sistema com base nos dados fornecidos.",
+        "operationId": "cadastrarGerente",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GerenteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Gerente cadastrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GerenteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GerenteResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Estacionamento não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GerenteResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de dados (e-mail ou CPF/CNPJ já cadastrado)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GerenteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estacionamento/{id}/valores": {
+      "get": {
+        "tags": ["13. Rotas 1:N — Estacionamento"],
+        "summary": "Listar tarifas do estacionamento (1:N)",
+        "description": "Acesso público. Lista todas as tabelas de preços e tarifas ativas do estacionamento informado.",
+        "operationId": "listarValoresDoEstacionamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estacionamento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de tarifas retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValorResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Estacionamento não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValorResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "tags": ["13. Rotas 1:N — Estacionamento"],
+        "summary": "Cadastrar tarifa no estacionamento (1:N)",
+        "description": "Requer perfil DONO ou ADMIN. Cadastra uma nova tarifa vinculada ao estacionamento informado na URL.",
+        "operationId": "cadastrarValorNoEstacionamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estacionamento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValorRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Tarifa cadastrada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos (Bean Validation)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Estacionamento não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estacionamento/{id}/reservas": {
+      "get": {
+        "tags": ["13. Rotas 1:N — Estacionamento"],
+        "summary": "Listar reservas do estacionamento (1:N)",
+        "description": "Acesso público. Lista todas as reservas ativas vinculadas ao estacionamento informado.",
+        "operationId": "listarReservasDoEstacionamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estacionamento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de reservas retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReservaResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Estacionamento não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReservaResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "tags": ["13. Rotas 1:N — Estacionamento"],
+        "summary": "Cadastrar reserva no estacionamento (1:N)",
+        "description": "Requer perfil CLIENTE, DONO, GERENTE ou ADMIN. Cria uma reserva vinculada ao estacionamento informado na URL (retorna 409 se não houver vagas).",
+        "operationId": "cadastrarReservaNoEstacionamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estacionamento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Reserva cadastrada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos (Bean Validation)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Estacionamento ou cliente não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Sem vagas disponíveis para o período",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estacionamento/{id}/avaliacoes": {
+      "get": {
+        "tags": ["13. Rotas 1:N — Estacionamento"],
+        "summary": "Listar avaliações do estacionamento (1:N)",
+        "description": "Acesso público. Lista todas as avaliações ativas recebidas pelo estacionamento informado.",
+        "operationId": "listarAvaliacoesDoEstacionamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estacionamento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de avaliações retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvaliacaoResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Estacionamento não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvaliacaoResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "tags": ["13. Rotas 1:N — Estacionamento"],
+        "summary": "Cadastrar avaliação no estacionamento (1:N)",
+        "description": "Requer perfil CLIENTE, DONO, GERENTE ou ADMIN. Registra uma avaliação para o estacionamento informado na URL.",
+        "operationId": "cadastrarAvaliacaoNoEstacionamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estacionamento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvaliacaoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Avaliação cadastrada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvaliacaoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Avaliação inválida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvaliacaoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Estacionamento ou cliente não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvaliacaoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estacionamento/{id}/acessos": {
+      "get": {
+        "tags": ["13. Rotas 1:N — Estacionamento"],
+        "summary": "Listar acessos do estacionamento (1:N)",
+        "description": "Acesso público. Lista todos os registros de entrada e saída de veículos do estacionamento informado.",
+        "operationId": "listarAcessosDoEstacionamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estacionamento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de acessos retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AcessoResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Estacionamento não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AcessoResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "tags": ["13. Rotas 1:N — Estacionamento"],
+        "summary": "Registrar acesso no estacionamento (1:N)",
+        "description": "Requer perfil CLIENTE, DONO, GERENTE ou ADMIN. Registra a entrada/saída de um veículo no estacionamento informado na URL.",
+        "operationId": "cadastrarAcessoNoEstacionamento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estacionamento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcessoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Acesso registrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcessoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos (Bean Validation)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcessoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Estacionamento não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcessoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dono": {
+      "get": {
+        "tags": ["03. Donos de Estacionamento"],
+        "summary": "Listar donos",
+        "description": "Gera uma lista de todos os donos ativos cadastrados no sistema.",
+        "operationId": "listarDonos",
+        "responses": {
+          "200": {
+            "description": "Lista de donos retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DonoResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["03. Donos de Estacionamento"],
+        "summary": "Cadastrar dono",
+        "description": "Acesso público. Cadastra um novo proprietário de estacionamento no sistema.",
+        "operationId": "cadastrarDono",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DonoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Dono cadastrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonoResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de dados (e-mail já cadastrado)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DonoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/dono/{id}/estacionamentos": {
+      "get": {
+        "tags": ["12. Rotas 1:N — Dono"],
+        "summary": "Listar estacionamentos do proprietário (1:N)",
+        "description": "Requer perfil DONO ou ADMIN. Lista todos os estacionamentos ativos pertencentes ao proprietário informado.",
+        "operationId": "listarEstacionamentosDoDono",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do dono de estacionamento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de estacionamentos retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EstacionamentoResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Proprietário não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EstacionamentoResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["12. Rotas 1:N — Dono"],
+        "summary": "Cadastrar estacionamento para o proprietário (1:N)",
+        "description": "Requer perfil DONO ou ADMIN. Cadastra um novo estacionamento vinculado automaticamente ao proprietário informado na URL.",
+        "operationId": "cadastrarEstacionamentoDoDono",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do dono de estacionamento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstacionamentoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Estacionamento cadastrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstacionamentoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos (Bean Validation)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstacionamentoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Proprietário não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstacionamentoResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de dados (alvará ou escritura já cadastrados)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstacionamentoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cliente": {
+      "get": {
+        "tags": ["02. Clientes"],
+        "summary": "Listar todos os clientes",
+        "description": "Acesso público. Retorna todos os clientes ativos cadastrados no sistema.",
+        "operationId": "listarClientes",
+        "responses": {
+          "200": {
+            "description": "Lista de clientes retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClienteResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "tags": ["02. Clientes"],
+        "summary": "Cadastrar um novo cliente",
+        "description": "Acesso público. Cadastra um novo cliente e retorna status 201 com header Location.",
+        "operationId": "cadastrarCliente",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClienteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Cliente cadastrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos (Bean Validation)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de dados (e-mail já cadastrado)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/cliente/{id}/carros": {
+      "get": {
+        "tags": ["11. Rotas 1:N — Cliente"],
+        "summary": "Listar carros do cliente (1:N)",
+        "description": "Requer perfil CLIENTE, DONO, GERENTE ou ADMIN. Retorna os carros ativos vinculados ao cliente.",
+        "operationId": "listarCarrosDoCliente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do cliente",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de carros retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CarroResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CarroResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["11. Rotas 1:N — Cliente"],
+        "summary": "Cadastrar carro para o cliente (1:N)",
+        "description": "Requer perfil CLIENTE ou ADMIN. Cadastra um novo carro vinculado automaticamente ao cliente informado na URL.",
+        "operationId": "cadastrarCarroDoCliente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do cliente proprietário do carro",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CarroRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Carro cadastrado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarroResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos (Bean Validation)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarroResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarroResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Placa já cadastrada",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarroResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "post": {
+        "tags": ["01. Autenticação"],
+        "summary": "Consultar dados do usuário autenticado",
+        "description": "Requer token JWT válido. Retorna os dados do usuário correspondente ao token informado no botão Authorize.",
+        "operationId": "me",
+        "responses": {
+          "200": {
+            "description": "Dados do usuário retornados com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token JWT ausente ou inválido",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["01. Autenticação"],
+        "summary": "Realizar login",
+        "description": "Acesso público. Valida e-mail e senha e retorna um token JWT Bearer.",
+        "operationId": "login",
+        "requestBody": {
+          "description": "Credenciais de acesso do usuário",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuarioLoginRequest"
+              },
+              "examples": {
+                "Exemplo de Login": {
+                  "description": "Exemplo de Login",
+                  "value": {
+                    "email": "admin@teste.com",
+                    "senha": "123456"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsuarioLoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciais inválidas",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsuarioLoginResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/valor": {
+      "get": {
+        "tags": ["07. Tarifas e Valores"],
+        "summary": "Listar valores",
+        "description": "Lista todos os valores ativos cadastrados no sistema",
+        "operationId": "listarValor",
+        "responses": {
+          "200": {
+            "description": "Lista de valores retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserva": {
+      "get": {
+        "tags": ["08. Reservas"],
+        "summary": "Listar reservas",
+        "description": "Cria uma lista de todas as reservas ativas presentes no sistema",
+        "operationId": "listarReservas",
+        "responses": {
+          "200": {
+            "description": "Lista de reservas retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReservaResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estacionamento": {
+      "get": {
+        "tags": ["05. Estacionamentos"],
+        "summary": "Listar todos os estacionamentos",
+        "description": "Acesso público. Retorna todos os estacionamentos ativos cadastrados no sistema.",
+        "operationId": "listarEstacionamentos",
+        "responses": {
+          "200": {
+            "description": "Lista de estacionamentos retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EstacionamentoResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/cliente/{id}/reservas": {
+      "get": {
+        "tags": ["11. Rotas 1:N — Cliente"],
+        "summary": "Listar reservas do cliente (1:N)",
+        "description": "Requer perfil CLIENTE, DONO, GERENTE ou ADMIN. Retorna todas as reservas ativas do cliente informado.",
+        "operationId": "listarReservasDoCliente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do cliente",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de reservas retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReservaResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente não encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReservaResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/carro": {
+      "get": {
+        "tags": ["06. Carros"],
+        "summary": "Listar carros",
+        "description": "Lista todos os carros ativos cadastrados no sistema",
+        "operationId": "listarCarros",
+        "responses": {
+          "200": {
+            "description": "Lista de carros retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CarroResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/avaliacao": {
+      "get": {
+        "tags": ["10. Avaliações"],
+        "summary": "Listar todas as avaliações",
+        "description": "Acesso público. Retorna todas as avaliações ativas cadastradas no sistema.",
+        "operationId": "listarAvaliacoes",
+        "responses": {
+          "200": {
+            "description": "Lista de avaliações retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvaliacaoResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/acesso": {
+      "get": {
+        "tags": ["09. Acessos (Entrada e Saída)"],
+        "summary": "Listar todos os acessos",
+        "description": "Retorna uma lista de todos os acessos ativos cadastrados no sistema.",
+        "operationId": "listarAcessos",
+        "responses": {
+          "200": {
+            "description": "Lista de acessos retornada com sucesso",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AcessoResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ValorRequest": {
+        "type": "object",
+        "properties": {
+          "tipoDeCobranca": {
+            "type": "string",
+            "description": "Tipo de cobrança do estacionamento, definido por enum Cobranca",
+            "enum": ["PORHORA", "PORVAGA"],
+            "example": "PORHORA"
+          },
+          "tipoDePagamento": {
+            "type": "string",
+            "description": "Tipo de pagamento do estacionamento, definido por enum Metodo",
+            "enum": ["PIX", "DEBITO", "DINHEIRO"],
+            "example": "DINHEIRO"
+          },
+          "preco": {
+            "type": "number",
+            "format": "double",
+            "description": "Preço cobrado pelo estacionamento",
+            "example": 10.0,
+            "exclusiveMinimum": 0
+          },
+          "periodo": {
+            "type": "string",
+            "description": "Período de cobrança do estacionamento, definido por enum Periodo",
+            "enum": ["UTIL", "FINALDESEMANA"],
+            "example": "FINALDESEMANA"
+          },
+          "estacionamentoId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID do estacionamento associado a esse valor",
+            "example": 1
+          }
+        },
+        "required": ["periodo", "preco", "tipoDeCobranca", "tipoDePagamento"]
+      },
+      "ValorResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tipoDeCobranca": {
+            "type": "string",
+            "description": "Tipo de cobrança do estacionamento, definido por enum Cobranca",
+            "enum": ["PORHORA", "PORVAGA"],
+            "examples": ["PORHORA"]
+          },
+          "tipoDePagamento": {
+            "type": "string",
+            "description": "Tipo de pagamento do estacionamento, definido por enum Metodo",
+            "enum": ["PIX", "DEBITO", "DINHEIRO"],
+            "examples": ["DINHEIRO"]
+          },
+          "preco": {
+            "type": "number",
+            "format": "double",
+            "description": "Preço cobrado pelo estacionamento",
+            "examples": [10.0]
+          },
+          "periodo": {
+            "type": "string",
+            "description": "Período de cobrança do estacionamento, definido por enum Periodo",
+            "enum": ["UTIL", "FINALDESEMANA"],
+            "examples": ["FINALDESEMANA"]
+          },
+          "estacioId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID do estacionamento associado a esse valor",
+            "examples": [1]
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Status da entidade, se está ativa ou inativa no sistema",
+            "examples": [true]
+          }
+        }
+      },
+      "ReservaRequest": {
+        "type": "object",
+        "properties": {
+          "clienteId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Cliente que solicitou a reserva",
+            "example": 1
+          },
+          "estacioId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Estabelecimento cadastrado em que a reserva foi solicitada",
+            "example": 1
+          },
+          "dataDaReserva": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data em que a reserva foi feita, necessario ser futura",
+            "example": "2026-12-25"
+          },
+          "horaDaReserva": {
+            "type": "string",
+            "description": "Hora em que a reserva foi feita, necessario estar dentro do horario de funcionamento do estacionamento",
+            "example": "14:30:00",
+            "pattern": "HH:mm:ss"
+          },
+          "statusReserva": {
+            "type": "string",
+            "description": "Status da reserva",
+            "enum": ["PENDENTE", "ACEITA", "RECUSADA", "ENCERRADA"],
+            "example": "PENDENTE"
+          }
+        },
+        "required": ["clienteId", "dataDaReserva", "estacioId", "horaDaReserva"]
+      },
+      "AcessoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "carroId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Id do carro que acessou o estacionamento",
+            "examples": [1]
+          },
+          "placaDoCarro": {
+            "type": "string",
+            "description": "Placa do carro que acessou o estacionamento, caso erro, resulta em Null e necessita preenchimento manual posteriormente.",
+            "examples": ["EUD8679"]
+          },
+          "horaDeEntrada": {
+            "type": "string",
+            "description": "Hora em que o carro entrou",
+            "examples": ["17:50"],
+            "pattern": "HH:mm:ss"
+          },
+          "horaDeSaida": {
+            "type": "string",
+            "description": "Hora em que o carro saiu",
+            "examples": ["19:30"],
+            "pattern": "HH:mm:ss"
+          },
+          "totalHoras": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Total de horas que o carro ficou no estacionamento",
+            "examples": [1.5]
+          },
+          "valorAPagar": {
+            "type": "number",
+            "format": "double",
+            "description": "Valor total a pagar pelo tempo de uso do estacionamento",
+            "examples": [15.0]
+          },
+          "estacioId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Id do estacionamento em que o veiculo entrou",
+            "examples": [3]
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Status da entidade, se está ativa ou inativa no sistema",
+            "examples": [true]
+          }
+        }
+      },
+      "AvaliacaoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cliente": {
+            "$ref": "#/components/schemas/ClienteResponse",
+            "description": "Cliente que fez a avaliação",
+            "examples": [""]
+          },
+          "estacioId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID do estacionamento que foi avaliado",
+            "examples": [1]
+          },
+          "nota": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Nota dada pelo cliente ao estacionamento, de 0 a 5",
+            "examples": [3]
+          },
+          "comentario": {
+            "type": "string",
+            "description": "Comentario feito pelo cliente sobre o estacionamento",
+            "examples": ["Estacionamento bom, porem um pouco caro"]
+          },
+          "dataDeAvaliacao": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data em que a avaliação foi feita",
+            "examples": ["2023-11-25T15:30:00"]
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Status da entidade, se está ativa ou inativa no sistema",
+            "examples": [true]
+          }
+        }
+      },
+      "ClienteResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nome": {
+            "type": "string",
+            "description": "Nome do usuario.",
+            "examples": ["Pedro"]
+          },
+          "email": {
+            "type": "string",
+            "description": "E-mail do usuario",
+            "examples": ["pedro.nascimento@gmail.com"]
+          },
+          "senha": {
+            "type": "string",
+            "description": "Senha de acesso do usuario, deve conter pelo menos uma letra maiuscula, simbolo e numero",
+            "examples": ["Estacio_2025"]
+          },
+          "dataNascimento": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de nascimento do usuario, deve ser maior de 18 anos",
+            "examples": ["2000-09-12"]
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Status da entidade, se está ativa ou inativa no sistema",
+            "examples": [true]
+          }
+        }
+      },
+      "EstacionamentoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nome": {
+            "type": "string",
+            "description": "Nome do estacionamento.",
+            "examples": ["Estacionamento Central"]
+          },
+          "endereco": {
+            "type": "string",
+            "description": "Endereço do estacionamento.",
+            "examples": ["Rua das Flores"]
+          },
+          "CEP": {
+            "type": "string",
+            "description": "CEP do estacionamento.",
+            "examples": ["12345-678"]
+          },
+          "numero": {
+            "type": "string",
+            "description": "Número do estacionamento.",
+            "examples": ["123"]
+          },
+          "foto": {
+            "type": "string",
+            "description": "Foto do estacionamento.",
+            "examples": ["foto.jpg"]
+          },
+          "numeroAlvaraDeFuncionamento": {
+            "type": "string",
+            "description": "Número do alvará de funcionamento do estacionamento.",
+            "examples": ["123456789"]
+          },
+          "horaFechamento": {
+            "type": "string",
+            "description": "Hora de fechamento do estacionamento.",
+            "examples": ["22:00:00"],
+            "pattern": "HH:mm:ss"
+          },
+          "horaAbertura": {
+            "type": "string",
+            "description": "Hora de abertura do estacionamento.",
+            "examples": ["08:00:00"],
+            "pattern": "HH:mm:ss"
+          },
+          "vagasPreferenciais": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Número de vagas preferenciais do estacionamento.",
+            "examples": [10]
+          },
+          "maximoDeVagas": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Número máximo de vagas do estacionamento.",
+            "examples": [100]
+          },
+          "numeroDeEscrituraImovel": {
+            "type": "string",
+            "description": "Número de escritura do imóvel do estacionamento.",
+            "examples": ["987654321"]
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Status da entidade, se está ativa ou inativa no sistema",
+            "examples": [true]
+          },
+          "avaliacoes": {
+            "type": "array",
+            "description": "Armazena todas as avaliações feitas a este estacionamento",
+            "examples": [""],
+            "items": {
+              "$ref": "#/components/schemas/AvaliacaoResponse"
+            }
+          },
+          "acessos": {
+            "type": "array",
+            "description": "Armazena todos os acessos feitos neste estacionamento",
+            "examples": [""],
+            "items": {
+              "$ref": "#/components/schemas/AcessoResponse"
+            }
+          },
+          "reservas": {
+            "type": "array",
+            "description": "Armazena todas as reservas feitas neste estacionamento",
+            "examples": [""],
+            "items": {
+              "$ref": "#/components/schemas/ReservaResponseResumo"
+            }
+          },
+          "gerentes": {
+            "type": "array",
+            "description": "Armazena todos os gerentes responsaveis por este estacionamento",
+            "examples": [""],
+            "items": {
+              "$ref": "#/components/schemas/GerenteResponse"
+            }
+          }
+        }
+      },
+      "GerenteResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nome": {
+            "type": "string",
+            "description": "Nome do usuario.",
+            "examples": ["Pedro"]
+          },
+          "email": {
+            "type": "string",
+            "description": "E-mail do usuario",
+            "examples": ["pedro.nascimento@gmail.com"]
+          },
+          "senha": {
+            "type": "string",
+            "description": "Senha de acesso do usuario, deve conter pelo menos uma letra maiuscula, simbolo e numero",
+            "examples": ["Estacio_2025"]
+          },
+          "dataNascimento": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de nascimento do usuario, deve ser maior de 18 anos",
+            "examples": ["2000-09-12"]
+          },
+          "cpfOuCnpj": {
+            "type": "string",
+            "description": "Documento oficial necessário para contratar um gerente",
+            "examples": ["123.456.789-10"]
+          },
+          "estacionamentoId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID do estacionamento que o gerente irá gerenciar",
+            "examples": [1]
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Status da entidade, se está ativa ou inativa no sistema",
+            "examples": [true]
+          }
+        }
+      },
+      "ReservaResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cliente": {
+            "$ref": "#/components/schemas/ClienteResponse",
+            "description": "Cliente que solicitou a reserva"
+          },
+          "estacionamento": {
+            "$ref": "#/components/schemas/EstacionamentoResponse",
+            "description": "Estabelecimento cadastrado em que a reserva foi solicitada"
+          },
+          "dataDaReserva": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data em que a reserva foi feita, necessario ser futura",
+            "examples": ["2023-12-25"]
+          },
+          "horaDaReserva": {
+            "type": "string",
+            "description": "Hora em que a reserva foi feita, necessario estar dentro do horario de funcionamento do estacionamento",
+            "examples": ["14:30:00"],
+            "pattern": "HH:mm:ss"
+          },
+          "statusReserva": {
+            "type": "string",
+            "description": "Status atual da reserva",
+            "enum": ["PENDENTE", "ACEITA", "RECUSADA", "ENCERRADA"],
+            "examples": ["PENDENTE"]
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Status da entidade, se está ativa ou inativa no sistema",
+            "examples": [true]
+          }
+        }
+      },
+      "ReservaResponseResumo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cliente": {
+            "$ref": "#/components/schemas/ClienteResponse",
+            "description": "Cliente que solicitou a reserva"
+          },
+          "dataDaReserva": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data em que a reserva foi feita, necessario ser futura",
+            "examples": ["2023-12-25"]
+          },
+          "horaDaReserva": {
+            "type": "string",
+            "description": "Hora em que a reserva foi feita, necessario estar dentro do horario de funcionamento do estacionamento",
+            "examples": ["14:30:00"],
+            "pattern": "HH:mm:ss"
+          },
+          "statusReserva": {
+            "type": "string",
+            "description": "Status atual da reserva",
+            "enum": ["PENDENTE", "ACEITA", "RECUSADA", "ENCERRADA"],
+            "examples": ["PENDENTE"]
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Status da entidade, se está ativa ou inativa no sistema",
+            "examples": [true]
+          }
+        }
+      },
+      "GerenteRequest": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "description": "Nome do usuario.",
+            "example": "Pedro",
+            "maxLength": 255,
+            "minLength": 2
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "E-mail do usuario",
+            "example": "pedro.nascimento@gmail.com",
+            "minLength": 1
+          },
+          "senha": {
+            "type": "string",
+            "description": "Senha de acesso do usuario, deve conter pelo menos uma letra maiuscula, simbolo e numero",
+            "example": "Estacio_2025",
+            "maxLength": 2147483647,
+            "minLength": 6
+          },
+          "dataNascimento": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de nascimento do usuario, deve ser maior de 18 anos",
+            "example": "2000-09-12"
+          },
+          "cpfOuCnpj": {
+            "type": "string",
+            "description": "Documento oficial necessário para contratar um gerente",
+            "example": "123.456.789-10",
+            "maxLength": 18,
+            "minLength": 11
+          },
+          "estacionamentoId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID do estacionamento que o gerente irá gerenciar",
+            "example": 1
+          }
+        },
+        "required": [
+          "cpfOuCnpj",
+          "dataNascimento",
+          "email",
+          "estacionamentoId",
+          "nome",
+          "senha"
+        ]
+      },
+      "EstacionamentoRequest": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "description": "Nome do estacionamento criado",
+            "example": "EstacioPlay",
+            "minLength": 1
+          },
+          "endereco": {
+            "type": "string",
+            "description": "Endereço do estacionamento.",
+            "example": "Rua das Flores",
+            "minLength": 1
+          },
+          "CEP": {
+            "type": "string",
+            "description": "CEP do estacionamento.",
+            "example": "12345-678",
+            "minLength": 1
+          },
+          "numero": {
+            "type": "string",
+            "description": "Número do estacionamento.",
+            "example": "123",
+            "minLength": 1
+          },
+          "foto": {
+            "type": "string",
+            "description": "Foto do estacionamento.",
+            "example": "foto.jpg"
+          },
+          "numeroAlvaraDeFuncionamento": {
+            "type": "string",
+            "description": "Número do alvará de funcionamento do estacionamento.",
+            "example": "123456789",
+            "minLength": 1
+          },
+          "horaFechamento": {
+            "type": "string",
+            "description": "Hora de fechamento do estacionamento.",
+            "example": "22:00:00",
+            "pattern": "HH:mm:ss"
+          },
+          "horaAbertura": {
+            "type": "string",
+            "description": "Hora de abertura do estacionamento.",
+            "example": "08:00:00",
+            "pattern": "HH:mm:ss"
+          },
+          "vagasPreferenciais": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Número de vagas preferenciais do estacionamento.",
+            "example": 10,
+            "minimum": 0
+          },
+          "maximoDeVagas": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Número máximo de vagas do estacionamento.",
+            "example": 100,
+            "exclusiveMinimum": 0
+          },
+          "numeroDeEscrituraImovel": {
+            "type": "string",
+            "description": "Número de escritura do imóvel do estacionamento.",
+            "example": "987654321"
+          }
+        },
+        "required": [
+          "CEP",
+          "endereco",
+          "horaAbertura",
+          "horaFechamento",
+          "maximoDeVagas",
+          "nome",
+          "numero",
+          "numeroAlvaraDeFuncionamento"
+        ]
+      },
+      "DonoRequest": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "description": "Nome do usuario.",
+            "example": "Pedro",
+            "maxLength": 255,
+            "minLength": 2
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "E-mail do usuario",
+            "example": "pedro.nascimento@gmail.com",
+            "minLength": 1
+          },
+          "senha": {
+            "type": "string",
+            "description": "Senha de acesso do usuario, deve conter pelo menos uma letra maiuscula, simbolo e numero",
+            "example": "Estacio_2025",
+            "maxLength": 2147483647,
+            "minLength": 6
+          },
+          "dataNascimento": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de nascimento do usuario, deve ser maior de 18 anos",
+            "example": "2000-09-12"
+          }
+        },
+        "required": ["dataNascimento", "email", "nome", "senha"]
+      },
+      "DonoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nome": {
+            "type": "string",
+            "description": "Nome do usuario.",
+            "examples": ["Pedro"]
+          },
+          "email": {
+            "type": "string",
+            "description": "E-mail do usuario",
+            "examples": ["pedro.nascimento@gmail.com"]
+          },
+          "senha": {
+            "type": "string",
+            "description": "Senha de acesso do usuario, deve conter pelo menos uma letra maiuscula, simbolo e numero",
+            "examples": ["Estacio_2025"]
+          },
+          "dataNascimento": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de nascimento do usuario, deve ser maior de 18 anos",
+            "examples": ["2000-09-12"]
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Status da entidade, se está ativa ou inativa no sistema",
+            "examples": [true]
+          }
+        }
+      },
+      "ClienteRequest": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "description": "Nome do usuario.",
+            "example": "Pedro",
+            "maxLength": 255,
+            "minLength": 2
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "E-mail do usuario",
+            "example": "pedro.nascimento@gmail.com",
+            "minLength": 1
+          },
+          "senha": {
+            "type": "string",
+            "description": "Senha de acesso do usuario, deve conter pelo menos uma letra maiuscula, simbolo e numero",
+            "example": "Estacio_2025",
+            "maxLength": 2147483647,
+            "minLength": 6
+          },
+          "dataNascimento": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de nascimento do usuario, deve ser maior de 18 anos",
+            "example": "2000-09-12"
+          }
+        },
+        "required": ["dataNascimento", "email", "nome", "senha"]
+      },
+      "CarroRequest": {
+        "type": "object",
+        "properties": {
+          "clienteId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID do usuário proprietário do carro (opcional nas rotas /cliente/{id}/carros e /cliente/me/carros)",
+            "example": 3
+          },
+          "placa": {
+            "type": "string",
+            "description": "Placa de identificação do carro",
+            "example": "EUD8679",
+            "maxLength": 10,
+            "minLength": 7
+          },
+          "modelo": {
+            "type": "string",
+            "description": "Modelo do carro",
+            "example": "Corsa",
+            "minLength": 1
+          },
+          "cor": {
+            "type": "string",
+            "description": "Cor do carro",
+            "example": "Fuxia",
+            "minLength": 1
+          }
+        },
+        "required": ["cor", "modelo", "placa"]
+      },
+      "CarroResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "clienteId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID do usuario proprietário do carro",
+            "example": 3
+          },
+          "placa": {
+            "type": "string",
+            "description": "Placa de identificação do carro",
+            "example": "EUD-8679"
+          },
+          "modelo": {
+            "type": "string",
+            "description": "Modelo do carro",
+            "example": "Corsa"
+          },
+          "cor": {
+            "type": "string",
+            "description": "Cor do carro",
+            "example": "Fuxia"
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Status da entidade, se está ativa ou inativa no sistema",
+            "examples": [true]
+          }
+        }
+      },
+      "AvaliacaoRequest": {
+        "type": "object",
+        "properties": {
+          "clienteId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID do cliente que fez a avaliação",
+            "example": 1
+          },
+          "estacionamentoId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID do estacionamento que foi avaliado",
+            "example": 1
+          },
+          "nota": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Nota dada pelo cliente ao estacionamento, de 0 a 5",
+            "example": 4,
+            "maximum": 5,
+            "minimum": 0
+          },
+          "comentario": {
+            "type": "string",
+            "description": "Comentario feito pelo cliente sobre o estacionamento",
+            "example": "Estacionamento bom, porem um pouco caro",
+            "maxLength": 500,
+            "minLength": 0
+          },
+          "dataDeAvaliacao": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data em que a avaliação foi feita",
+            "example": "2026-11-16T15:30:00"
+          }
+        },
+        "required": ["clienteId", "estacionamentoId", "nota"]
+      },
+      "AcessoRequest": {
+        "type": "object",
+        "properties": {
+          "carroId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Id do carro que acessou o estacionamento",
+            "example": 1
+          },
+          "placaDoCarro": {
+            "type": "string",
+            "description": "Placa do carro que acessou o estacionamento",
+            "example": "EUD8679",
+            "minLength": 1
+          },
+          "horaDeEntrada": {
+            "type": "string",
+            "description": "Hora em que o carro entrou",
+            "example": "17:50:00",
+            "pattern": "HH:mm:ss"
+          },
+          "horaDeSaida": {
+            "type": "string",
+            "description": "Hora em que o carro saiu",
+            "example": "19:30:00",
+            "pattern": "HH:mm:ss"
+          },
+          "valorAPagar": {
+            "type": "number",
+            "format": "double",
+            "description": "Valor total a pagar pelo tempo de uso do estacionamento",
+            "example": 15.0,
+            "minimum": 0
+          },
+          "estacioId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Id do estacionamento em que o veiculo entrou",
+            "example": 1
+          }
+        },
+        "required": ["estacioId", "placaDoCarro"]
+      },
+      "UsuarioLoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "E-mail do usuário",
+            "example": "usuario@exemplo.com",
+            "minLength": 1
+          },
+          "senha": {
+            "type": "string",
+            "description": "Senha do usuário. Deve conter letra maiúscula, símbolo e número.",
+            "example": "Estacio_2025",
+            "minLength": 1
+          }
+        },
+        "required": ["email", "senha"]
+      },
+      "UsuarioLoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer authentication": {
+        "type": "http",
+        "description": "Informe o token JWT obtido em POST /auth/login",
+        "name": "Authorization",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
