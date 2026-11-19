@@ -13,6 +13,7 @@ import {
   NaoEncontrado,
   Sobre,
 } from "./pages/Institucional";
+import { Veiculos } from "./pages/Veiculos";
 export function App() {
   return (
     <SessaoProvider>
@@ -28,6 +29,7 @@ export function App() {
             <Route path="integrantes/:id" element={<Integrante />} />
             <Route path="faq" element={<FAQ />} />
             <Route path="contato" element={<Contato />} />
+            <Route path="veiculos" element={<Veiculos />} />
             <Route path="*" element={<NaoEncontrado />} />
           </Route>
         </Routes>
