@@ -5,6 +5,14 @@ import { FeedbackProvider } from "./contexts/FeedbackContext";
 import { Inicio } from "./pages/Inicio";
 import { Estacionamentos } from "./pages/Estacionamentos";
 import { Conta } from "./pages/Conta";
+import {
+  Contato,
+  FAQ,
+  Integrante,
+  Integrantes,
+  NaoEncontrado,
+  Sobre,
+} from "./pages/Institucional";
 export function App() {
   return (
     <SessaoProvider>
@@ -15,10 +23,12 @@ export function App() {
             <Route path="estacionamentos" element={<Estacionamentos />} />
             <Route path="entrar" element={<Conta />} />
             <Route path="cadastro" element={<Conta cadastro />} />
-            <Route
-              path="*"
-              element={<p>Pagina em desenvolvimento nesta etapa.</p>}
-            />
+            <Route path="sobre" element={<Sobre />} />
+            <Route path="integrantes" element={<Integrantes />} />
+            <Route path="integrantes/:id" element={<Integrante />} />
+            <Route path="faq" element={<FAQ />} />
+            <Route path="contato" element={<Contato />} />
+            <Route path="*" element={<NaoEncontrado />} />
           </Route>
         </Routes>
       </FeedbackProvider>
