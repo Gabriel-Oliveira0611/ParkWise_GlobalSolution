@@ -3,6 +3,7 @@ export const integrantes = [
   {
     id: "gabriel",
     nome: "Gabriel Pereira de Oliveira",
+    foto: "/imagens/equipe/gabriel.jpg",
     funcao: "Interface e integração",
     github: "https://github.com/Gabriel-Oliveira0611",
     rm: "572262",
@@ -10,6 +11,7 @@ export const integrantes = [
   {
     id: "adalto",
     nome: "Adalto Massahiro Nagabe",
+    foto: "/imagens/equipe/adalto.jpg",
     funcao: "Experiência e navegação",
     github: "",
     rm: "",
@@ -17,6 +19,7 @@ export const integrantes = [
   {
     id: "pedro",
     nome: "Pedro Henrique Carvalho",
+    foto: "/imagens/equipe/pedro.jpg",
     funcao: "API e autenticação",
     github: "https://github.com/pedrohcnascimento",
     rm: "",
@@ -24,6 +27,7 @@ export const integrantes = [
   {
     id: "murillo",
     nome: "Murillo Siviero Lopes",
+    foto: "/imagens/equipe/murillo.jpg",
     funcao: "Fluxos do motorista",
     github: "",
     rm: "",
@@ -31,6 +35,7 @@ export const integrantes = [
   {
     id: "kaua",
     nome: "Kauã Barros Ferreira",
+    foto: "/imagens/equipe/kaua.jpg",
     funcao: "Gestão e validação",
     github: "",
     rm: "",

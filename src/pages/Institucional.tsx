@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { integrantes, turma, contatoEmail } from "../config/equipe";
 import { Aviso, Botao, Cabecalho, Campo, Vazio } from "../components/UI";
+import { FotoIntegrante } from "../components/FotoIntegrante";
 export function Sobre() {
   return (
     <div className="container-site page">
@@ -107,18 +108,12 @@ export function Integrantes() {
       />
       <div className="parking-grid">
         {integrantes.map((i) => (
-          <article className="panel" key={i.id}>
-            <div
-              className="flex size-16 items-center justify-center rounded-2xl bg-pine-50 text-xl font-bold text-pine-800"
-              aria-hidden="true"
-            >
-              {i.nome
-                .split(" ")
-                .filter((n) => n.length > 2)
-                .slice(0, 2)
-                .map((n) => n[0])
-                .join("")}
-            </div>
+          <article className="panel flex h-full flex-col" key={i.id}>
+            <FotoIntegrante
+              nome={i.nome}
+              src={i.foto}
+              className="aspect-square w-full rounded-2xl"
+            />
             <h2 className="mt-5 text-xl font-bold">{i.nome}</h2>
             <p className="mt-2 text-ink-muted">{i.funcao}</p>
             <Link className="text-link mt-5" to={"/integrantes/" + i.id}>
@@ -141,24 +136,32 @@ export function Integrante() {
         descricao={i.funcao}
         voltar={{ href: "/integrantes", texto: "Voltar à equipe" }}
       />
-      <section className="panel max-w-2xl">
-        <p>
-          FIAP · {turma}
-          {i.rm ? " · RM " + i.rm : ""}
-        </p>
-        <p className="mt-4 text-ink-muted">
-          Integrante da equipe ParkWise na Global Solution CitizenTech 2026.
-        </p>
-        {i.github && (
-          <a
-            className="button button-primary mt-5"
-            href={i.github}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Perfil no GitHub
-          </a>
-        )}
+      <section className="panel grid max-w-3xl gap-6 sm:grid-cols-[11rem_minmax(0,1fr)]">
+        <FotoIntegrante
+          nome={i.nome}
+          src={i.foto}
+          prioridade
+          className="aspect-square w-full max-w-64 rounded-2xl"
+        />
+        <div>
+          <p>
+            FIAP · {turma}
+            {i.rm ? " · RM " + i.rm : ""}
+          </p>
+          <p className="mt-4 text-ink-muted">
+            Integrante da equipe ParkWise na Global Solution CitizenTech 2026.
+          </p>
+          {i.github && (
+            <a
+              className="button button-primary mt-5"
+              href={i.github}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Perfil no GitHub
+            </a>
+          )}
+        </div>
       </section>
     </div>
   );
